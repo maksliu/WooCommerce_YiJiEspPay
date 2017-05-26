@@ -305,6 +305,7 @@ function yjpayesp_gateway_init (){
               switch ($_REQUEST['status']){
                 case 'success':
                 $update_static = $order->update_status('processing', __($_REQUEST['status'],$this->id));
+                $order->reduce_order_stock();
                 break;
                 case 'fail':
                 $update_static = $order->update_status('failed', __($_REQUEST['status'],$this->id));
@@ -312,15 +313,14 @@ function yjpayesp_gateway_init (){
                 break;
                 case 'authorizing':
                 $update_static = $order->update_status('on-hold', __($_REQUEST['status'],$this->id));
+                $order->reduce_order_stock();
                 break;
                 case 'processing':
                 $update_static = $order->update_status('processing', __($_REQUEST['status'],$this->id));
                 break;
               }
               $update_static ? exit("success") : exit("fail");
-
             }
-            exit("success");
           }else{
             file_put_contents(dirname(__FILE__).'/logs/'.date('Ymd').'log.txt',"[NOTIFY_REQUEST_ORDER_BY_".$_REQUEST['merchOrderNo']." requset_time:".date('Y-m-d H:i:s')." request_ip:".$this->get_real_ip()." ](签名失败):\n".json_encode($_REQUEST)."\n\n",FILE_APPEND);
             exit("fail");
