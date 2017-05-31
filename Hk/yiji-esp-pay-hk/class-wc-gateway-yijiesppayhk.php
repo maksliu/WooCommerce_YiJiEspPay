@@ -33,6 +33,7 @@ function yjpayesp_gateway_init (){
       $this->signKey = $this->get_option('signKey');
       $this->url = $this->get_option('url');
       $this->embedded = $this->get_option('embedded');
+      $this->language = $this->get_option('language');
       array_push($this->supports,'refunds');
 
       add_action( 'woocommerce_update_options_payment_gateways_'.$this->id, array(&$this, 'process_admin_options' ) );
@@ -146,8 +147,8 @@ function yjpayesp_gateway_init (){
               'en'=>'English',
               'jp'=>'Japanese',
               'de'=>'Deutsch',
-              'ESP'=>'El español',
-              'FR'=>'Français'
+              'es'=>'El español',
+              'fr'=>'Français'
             )
             )
           );
@@ -224,6 +225,7 @@ function yjpayesp_gateway_init (){
             'customerPhonenumber'=>trim($order->billing_phone),
           );
           $request_data['attachDetails'] = json_encode($attachDetails_data);
+          $request_data['language'] =  trim($this->language);
           $request_data['signType'] = 'MD5';
           $request_data['sign'] = $this->getSignString($request_data);
           return $request_data;
